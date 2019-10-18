@@ -1,14 +1,14 @@
 package br.edu.ifba.saj.sistemabanco.conta;
 
-public class ContaCorrente extends Conta{
+public class ContaCorrente extends Conta {
 
-  private double limite = 100;
+	private double limite = 100;
 
 	public ContaCorrente() {
 		super();
 	}
 
-  public ContaCorrente(int numero) {
+	public ContaCorrente(int numero) {
 		super(numero);
 	}
 
@@ -20,12 +20,17 @@ public class ContaCorrente extends Conta{
 		this.limite = limite;
 	}
 
-  public boolean saca(double valor) {
+	public boolean saca(double valor) {
 		if (valor <= (getSaldo() + limite)) {
 			setSaldo(getSaldo() - valor);
 			getExtrato().registrar(-valor);
 			return true;
 		}
 		return false;
-	}  
+	}
+
+	@Override
+	public double getSaldoTotal() {
+		return getSaldo()+getLimite();
+	}
 }

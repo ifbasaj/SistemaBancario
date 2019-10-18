@@ -1,9 +1,12 @@
 package br.edu.ifba.saj.sistemabanco.conta;
 
 import  br.edu.ifba.saj.sistemabanco.cliente.Cliente;
+import br.edu.ifba.saj.sistemabanco.operacao.Credito;
+import br.edu.ifba.saj.sistemabanco.operacao.Debito;
+import br.edu.ifba.saj.sistemabanco.operacao.Operacao;
 import  br.edu.ifba.saj.sistemabanco.servico.Extrato;
 
-public class Conta {
+public abstract class Conta {
 	private static int qtdContas;
 	private int numero;
 	private Cliente cliente;
@@ -48,24 +51,23 @@ public class Conta {
 	protected Extrato getExtrato() {
 		return extrato;
 	}
-
-	public void deposita(double valor) {
-		saldo = saldo + valor;
-		extrato.registrar(valor);
-	}
 	
-	public boolean saca(double valor) {
-		if (valor <= saldo) {
-			saldo = saldo - valor;
-			extrato.registrar(-valor);
+	
+	public boolean executa(Operacao operacao) {
+		if(operacao.valida(this)) {
+			double valorOperacao = operacao.operar();
+			this.saldo+=valorOperacao;
+			extrato.registrar(valorOperacao);
 			return true;
 		}
 		return false;
 	}
 
 	public boolean transfere(Conta destino, double valorTransferencia) {
-		if (saca(valorTransferencia)) {
-			destino.deposita(valorTransferencia);
+		Debito debito = new Debito(valorTransferencia);
+		Credito credito = new Credito(valorTransferencia);
+		if(this.executa(debito)) {
+			destino.executa(credito);			
 			return true;
 		}
 		return false;
@@ -87,5 +89,7 @@ public class Conta {
   public String toString() {
     return "Conta numero: "+getNumero() +"\n Saldo: "+getSaldo()+"\n Cliente: "+getCliente().getNome();
   }
+
+  public abstract double getSaldoTotal(); 
   
 }
