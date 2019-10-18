@@ -20,6 +20,14 @@ public class ContaCorrente extends Conta {
 		this.limite = limite;
 	}
 
+	public boolean saca(double valor) {
+		if (valor <= (getSaldo() + limite)) {
+			setSaldo(getSaldo() - valor);
+			getExtrato().registrar(-valor);
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public double getSaldoTotal() {
